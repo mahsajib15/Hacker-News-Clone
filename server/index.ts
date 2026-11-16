@@ -1,48 +1,47 @@
-import net from "node:net";
+import { type ErrorResponse } from "@/shared/types";
 import { Hono } from "hono";
-
-import { serve } from "@hono/node-server";
+import { HTTPException } from "hono/http-exception";
 
 const app = new Hono();
 
 app.get("/", (c) => {
+
+  throw new Error("Unexpected Error");
+
+  // throw new HTTPException(404, { message: "Post Not Found",
+  //   cause: { form: true },
+  //  });
   return c.text("Hello Hono!");
 });
 
-const getAvailablePort = async (preferredPort: number, maxAttempts = 20) => {
-  for (
-    let port = preferredPort;
-    port < preferredPort + maxAttempts;
-    port += 1
-  ) {
-    const isFree = await new Promise<boolean>((resolve) => {
-      const probe = net.createServer();
-      probe.once("error", () => resolve(false));
-      probe.listen(port, "127.0.0.1", () => {
-        probe.close(() => resolve(true));
-      });
-    });
-
-    if (isFree) {
-      return port;
-    }
+app.onError((err, c) => {
+  if (err instanceof HTTPException) {
+    const errResponse =
+      err.res ??
+      c.json<ErrorResponse>(
+        {
+          success: false,
+          error: err.message,
+          isFormError:
+            err.cause && typeof err.cause === "object" && "form" in err.cause
+              ? err.cause.form === true
+              : false,
+        },
+        err.status,
+      );
+    return errResponse;
   }
 
-  return preferredPort;
-};
-
-void (async () => {
-  const port = await getAvailablePort(Number(process.env["PORT"] ?? 3000));
-
-  serve(
+  return c.json<ErrorResponse>(
     {
-      fetch: app.fetch,
-      port,
+      success: false,
+      error:
+        process.env.NODE_ENV === "production"
+          ? "Interal Server Error"
+          : (err.stack ?? err.message),
     },
-    (info) => {
-      console.log(`Server is running on http://localhost:${info.port}`);
-    },
+    500,
   );
-})();
+});
 
 export default app;
