@@ -4,7 +4,7 @@ services:
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: betternewsdb
+      POSTGRES_DB: betternews_db
     volumes:
       - db_data:/var/lib/postgresql/data
     networks:
@@ -17,4 +17,4 @@ networks:
     driver: bridge
 
 volumes:
-  postgres_data:
+  db_data:
