@@ -1,9 +1,11 @@
 import "dotenv/config";
 
+import { DrizzlePostgreSQLAdapter } from "@lucia-auth/adapter-drizzle";
 import { drizzle } from "drizzle-orm/postgres-js";
 
 import postgres from "postgres";
 import { z } from "zod";
+import { sessionTable, userTable } from "./db/schemas/auth";
 
 const EnvSchema = z.object({
   DATABASE_URL: z.string().url(),
@@ -18,3 +20,4 @@ const result = await db.execute("SELECT 1 + 1 AS result");
 console.log(result);
 
 export { db };
+export const adapter = new DrizzlePostgreSQLAdapter(db, sessionTable, userTable);

@@ -13,8 +13,8 @@ export default defineConfig([
   pluginReact.configs.flat.recommended,
   eslingPretierConfig, 
   {
-    plugins: { 
-      drizzle: fixupPluginRules(drizzlePlugin) 
+    plugins: {
+      drizzle: fixupPluginRules(drizzlePlugin)
     },
   },
 ]);

@@ -1,16 +1,25 @@
 {
   "name": "betternews",
+  "type": "module",
   "scripts": {
-    "dev": "tsx server/index.ts",
-    "format:write": "prettier --write .",
-    "format:check": "prettier --check ."
+    "dev": "bun run --hot server/index.ts",
+    "format:write": "prettier . --write",
+    "format:check": "prettier . --check",
+    "lint:server": "cd server && eslint .",
+    "lint:frontend": "cd frontend && eslint .",
+    "start": "bun server/index.ts"
   },
   "dependencies": {
     "@hono/node-server": "^2.1.8",
+    "@hono/zod-validator": "^0.9.1",
+    "@lucia-auth/adapter-drizzle": "^1.1.0",
+    "context": "^4.0.18",
     "docker": "^1.0.0",
     "dotenv": "^18.0.10",
-    "drizzle-orm": "^1.0.0-rc.5",
+    "drizzle-orm": "^0.45.4",
+    "drizzle-zod": "^0.8.3",
     "hono": "^4.13.16",
+    "lucia": "^3.2.2",
     "pg": "^8.23.1",
     "postgres": "^4.1.1",
     "zod": "^4.6.7"
